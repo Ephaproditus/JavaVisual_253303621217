@@ -1,5 +1,7 @@
 package com.unpri.charactermanager.model;
 
+import java.util.Objects;
+
 public class Character {
     private String name;
     private CharacterType type;
@@ -8,82 +10,74 @@ public class Character {
     private int attackPower;
     private int mana;
 
+    // Attribute Static untuk melacak jumlah total objek Character yang dibuat
+    private static int totalCharacterCreated = 0;
+
+    // Constructor Default (Level 1)
     public Character(String name, CharacterType type) {
-        this.name = name;
-        this.type = type;
-        this.level = 1;
-        this.hitPoints = 120;
-        this.attackPower = 20;
-        this.mana = 50;
+        this(name, type, 1, 120, 20, 50);
     }
 
+    // Constructor Rekonstruksi Penuh
     public Character(String name, CharacterType type, int level, int hitPoints, int attackPower, int mana) {
         this.name = name;
         this.type = type;
-        this.setLevel(level);
+        this.level = level;
         this.hitPoints = hitPoints;
         this.attackPower = attackPower;
-        this.setMana(mana);
+        this.mana = mana;
+        totalCharacterCreated++;
     }
 
-    public String getName() {
-        return name;
+    // Overriding equals() untuk Bagian A: membandingkan nama karakter (case-insensitive)
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Character other = (Character) obj;
+        return Objects.equals(this.name != null ? this.name.toLowerCase() : null, 
+                            other.name != null ? other.name.toLowerCase() : null);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name != null ? name.toLowerCase() : null);
     }
 
-    public CharacterType getType() {
-        return type;
-    }
+    // Getter & Setter
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setType(CharacterType type) {
-        this.type = type;
-    }
+    public CharacterType getType() { return type; }
+    public void setType(CharacterType type) { this.type = type; }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        if (level < 1) {
-            throw new IllegalArgumentException("Level tidak boleh kurang dari 1!");
-        }
+    public int getLevel() { return level; }
+    public void setLevel(int level) { 
         this.level = level;
         this.hitPoints = 100 + (level * 20);
         this.attackPower = 15 + (level * 5);
     }
 
-    public int getHitPoints() {
-        return hitPoints;
-    }
+    public int getHitPoints() { return hitPoints; }
+    public void setHitPoints(int hitPoints) { this.hitPoints = hitPoints; }
 
-    public void setHitPoints(int hitPoints) {
-        this.hitPoints = hitPoints;
-    }
+    public int getAttackPower() { return attackPower; }
+    public void setAttackPower(int attackPower) { this.attackPower = attackPower; }
 
-    public int getAttackPower() {
-        return attackPower;
-    }
-
-    public void setAttackPower(int attackPower) {
-        this.attackPower = attackPower;
-    }
-
-    public int getMana() {
-        return mana;
-    }
-
-    public void setMana(int mana) {
+    public int getMana() { return mana; }
+    public void setMana(int mana) { 
         if (mana < 0) {
             throw new IllegalArgumentException("Mana tidak boleh bernilai negatif!");
         }
-        this.mana = mana;
+        this.mana = mana; 
+    }
+
+    public static int getTotalCharacterCreated() {
+        return totalCharacterCreated;
     }
 
     public boolean isAlive() {
-        return this.hitPoints > 0;
+        return hitPoints > 0;
     }
 
     public void levelUp() {
@@ -92,13 +86,7 @@ public class Character {
 
     @Override
     public String toString() {
-        return "Character{" +
-                "name='" + name + '\'' +
-                ", type=" + type +
-                ", level=" + level +
-                ", hitPoints=" + hitPoints +
-                ", attackPower=" + attackPower +
-                ", mana=" + mana +
-                '}';
+        return String.format("Character{name='%s', type=%s, level=%d, HP=%d, ATK=%d, Mana=%d}",
+                name, type, level, hitPoints, attackPower, mana);
     }
 }
